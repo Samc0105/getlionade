@@ -808,7 +808,7 @@
   </div>
 
   <!-- DevOps access modal -->
-  <div id="devops-modal">
+  <div id="devops-modal" data-app-url="https://getlionade.com">
     <div class="devops-box">
       <div class="devops-tag">// Internal Access</div>
       <div class="devops-title">DEVOPS LOGIN</div>
@@ -817,7 +817,7 @@
       <div id="devops-error">Access Denied</div>
       <div id="devops-success">
         <div class="devops-granted">✓ Access Granted</div>
-        <a class="devops-enter-btn" href="http://localhost:3000">ENTER BETA</a>
+        <a class="devops-enter-btn" id="devops-enter-btn" href="https://lionade.vercel.app">ENTER BETA</a>
       </div>
     </div>
   </div>
@@ -894,6 +894,10 @@
     (function () {
       const trigger = document.getElementById('devops-trigger');
       const modal = document.getElementById('devops-modal');
+      const pwInput = document.getElementById('devops-pw-input');
+
+      if (!trigger || !modal || !pwInput) return;
+
       let clicks = 0;
       let resetTimer = null;
 
@@ -914,7 +918,7 @@
       });
 
       // Keyboard support inside the modal
-      document.getElementById('devops-pw-input').addEventListener('keydown', function (e) {
+      pwInput.addEventListener('keydown', function (e) {
         if (e.key === 'Enter') devopsSubmit();
         if (e.key === 'Escape') closeDevOpsModal();
       });
@@ -935,9 +939,19 @@
       document.getElementById('devops-modal').classList.remove('open');
     }
 
+    function getDevopsTargetUrl() {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:3000/dashboard';
+      return 'https://lionade.vercel.app';
+    }
+
     function devopsSubmit() {
       const val = document.getElementById('devops-pw-input').value;
       if (val === 'LionadeDevOps2026') {
+        const target = getDevopsTargetUrl();
+        const enterBtn = document.getElementById('devops-enter-btn');
+        if (enterBtn) enterBtn.setAttribute('href', target);
+
         document.getElementById('devops-pw-input').style.display = 'none';
         document.getElementById('devops-submit').style.display = 'none';
         document.getElementById('devops-error').style.display = 'none';
